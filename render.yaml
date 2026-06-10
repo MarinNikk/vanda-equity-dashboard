@@ -1,0 +1,19 @@
+# Render blueprint for the API. Apply via "New > Blueprint" or set it up by hand.
+# (Frontend's on Vercel, Postgres on Neon, importer on GitHub Actions.)
+services:
+  - type: web
+    name: vanda-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: frankfurt         # same region as the Neon database
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL          # Neon string, set as a secret in the dashboard
+        sync: false
+      - key: COOKIE_SECURE         # HTTPS-only cookie in prod
+        value: "true"
+      - key: CORS_ORIGINS          # your Vercel URL
+        value: https://YOUR-APP.vercel.app
+    # no TWELVEDATA_API_KEY here — only the importer needs it

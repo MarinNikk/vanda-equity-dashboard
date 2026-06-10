@@ -1,0 +1,71 @@
+# One-command local stack: Postgres + API + SPA + a one-shot seeder.
+# `docker compose up --build`, then open http://localhost:8080 (Marin / marin123).
+# `down -v` wipes the database. The key (backend/.env) is only used by seed/importer.
+services:
+  # --- PostgreSQL -----------------------------------------------------------
+  db:
+    image: postgres:16
+    container_name: vanda-postgres
+    environment:
+      POSTGRES_USER: vanda
+      POSTGRES_PASSWORD: vanda
+      POSTGRES_DB: vanda
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vanda -d vanda"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # --- FastAPI backend (uvicorn) -------------------------------------------
+  backend:
+    build: ./backend
+    image: vanda-backend:latest          # shared with the `seed` service below
+    container_name: vanda-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # `db` is the host on the compose network, not localhost
+      DATABASE_URL: postgresql://vanda:vanda@db:5432/vanda
+      CORS_ORIGINS: http://localhost:8080  # only matters if the API is hit directly
+    ports:
+      - "8000:8000"
+
+  # --- SPA built and served by nginx, reverse-proxying /api to the backend --
+  frontend:
+    build: ./frontend
+    container_name: vanda-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+  # --- One-shot seeder: demo user + price import, then exits ---------------
+  # Safe to re-run: user creation no-ops if it exists, the importer UPSERTs.
+  seed:
+    # reuses the backend image — two services building the same tag in parallel race
+    image: vanda-backend:latest
+    container_name: vanda-seed
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://vanda:vanda@db:5432/vanda
+      DEMO_USER: Marin
+      DEMO_PASSWORD: marin123
+    env_file:
+      - ./backend/.env                    # supplies TWELVEDATA_API_KEY for the import
+    restart: "no"
+    command:
+      - sh
+      - -c
+      - >
+        python -m app.create_user "$$DEMO_USER" "$$DEMO_PASSWORD" || true;
+        python -m app.importer
+
+volumes:
+  pgdata:

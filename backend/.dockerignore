@@ -1,0 +1,10 @@
+# Keep the build context (and image) small and secret-free.
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+tests
+.env                # secrets are injected at runtime via compose env_file, never baked in
+*.db
+*.db-*
+market.db*

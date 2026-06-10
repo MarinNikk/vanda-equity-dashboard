@@ -1,0 +1,6 @@
+# Don't ship local build artifacts or deps into the build context — the image
+# installs from the lockfile and builds fresh.
+node_modules
+dist
+.vite
+*.log

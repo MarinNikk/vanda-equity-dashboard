@@ -1,0 +1,40 @@
+# Nightly importer into the Neon store — incremental (watermark) + idempotent (UPSERT).
+# Needs two repo secrets (Settings > Secrets and variables > Actions):
+#   DATABASE_URL        Neon connection string (…?sslmode=require)
+#   TWELVEDATA_API_KEY  Twelvedata API key
+name: Daily OHLCV import
+
+on:
+  schedule:
+    # 23:00 UTC on weekdays, after the US close (cron is always UTC)
+    - cron: "0 23 * * 1-5"
+  workflow_dispatch: {}        # also runnable on demand from the Actions tab
+
+# don't let a slow run overlap the next scheduled one
+concurrency:
+  group: importer
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - run: pip install -r requirements.txt
+
+      - name: Import the full universe
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+        # --sleep keeps us under the Twelvedata free-tier rate limit
+        run: python -m app.importer --sleep 2

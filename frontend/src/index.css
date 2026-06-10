@@ -1,0 +1,704 @@
+/* ============================================================================
+   Vanda Equity Analytics — fintech terminal theme
+   Colours live here as CSS variables keyed off a `data-theme` attribute on
+   <html>. SVG chart colours are mirrored in theme/ThemeContext.tsx.
+   ========================================================================== */
+
+:root {
+  --bg: #f6f7f9;
+  --bg-accent: #eef1f6;
+  --panel: #ffffff;
+  --panel-2: #f3f4f7;
+  --border: #e3e6ec;
+  --border-strong: #d4d8e0;
+  --text: #131722;
+  --text-2: #3c4250;
+  --muted: #6b7280;
+  --accent: #2962ff;
+  --accent-text: #2962ff;
+  --accent-weak: rgba(41, 98, 255, 0.1);
+  --up: #089981;
+  --up-weak: rgba(8, 153, 129, 0.12);
+  --down: #e5484d;
+  --down-weak: rgba(229, 72, 77, 0.12);
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.06);
+  --radius: 12px;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #0b0d13;
+  --bg-accent: #11141c;
+  --panel: #131722;
+  --panel-2: #1a1f2b;
+  --border: #1e222d;
+  --border-strong: #2a2e39;
+  --text: #d1d4dc;
+  --text-2: #b2b5be;
+  --muted: #787b86;
+  --accent: #4d7cfe;
+  --accent-text: #6f97ff;
+  --accent-weak: rgba(77, 124, 254, 0.14);
+  --up: #2ebd85;
+  --up-weak: rgba(46, 189, 133, 0.14);
+  --down: #ef5350;
+  --down-weak: rgba(239, 83, 80, 0.14);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.36);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* Tabular monospace figures for anything numeric, so columns line up. */
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- App shell ---------- */
+.app-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.5rem;
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.brand-mark {
+  color: var(--accent-text);
+  font-size: 1rem;
+  align-self: center;
+}
+
+.brand-text {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.brand-sub {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.6rem 0.25rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-2);
+}
+
+.user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.content {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Controls ---------- */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1.75rem;
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.ticker-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.ticker {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
+  padding: 0.4rem 0.7rem;
+  min-width: 64px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease, transform 0.06s ease;
+}
+
+.ticker:hover {
+  border-color: var(--border-strong);
+}
+
+.ticker:active {
+  transform: translateY(1px);
+}
+
+.ticker-symbol {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.ticker-name {
+  font-size: 0.66rem;
+  color: var(--muted);
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticker-active {
+  border-color: var(--accent);
+  background: var(--accent-weak);
+}
+
+.ticker-active .ticker-symbol {
+  color: var(--accent-text);
+}
+
+/* ---------- Segmented control (range + chart type) ---------- */
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.seg {
+  padding: 0.35rem 0.7rem;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.seg:hover {
+  color: var(--text);
+}
+
+.seg-active {
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme='dark'] .seg-active {
+  background: var(--border-strong);
+  color: #fff;
+}
+
+/* ---------- Summary ---------- */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.summary-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+}
+
+.hero-id {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.hero-symbol {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.hero-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.hero-period {
+  font-size: 0.78rem;
+}
+
+.hero-price {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hero-close {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pill-arrow {
+  font-size: 0.7rem;
+}
+
+.pill-up {
+  background: var(--up-weak);
+  color: var(--up);
+}
+
+.pill-down {
+  background: var(--down-weak);
+  color: var(--down);
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.9rem 1rem;
+}
+
+.kpi-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.kpi-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.kpi-sub {
+  font-size: 0.74rem;
+}
+
+/* ---------- Chart card ---------- */
+.chart-card {
+  padding: 0.9rem 1rem 1rem;
+}
+
+/* Matches the chart height in MarketChart. Reserved so the immutable rebuild
+   can't collapse the container and bump the page scroll to the top. */
+.chart-canvas {
+  height: 460px;
+}
+
+.chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.chart-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.reset-zoom {
+  padding: 0.32rem 0.6rem;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--accent-text);
+  border-radius: 7px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+
+.reset-zoom:hover {
+  border-color: var(--accent);
+}
+
+.hero-tag {
+  padding: 0.12rem 0.45rem;
+  border-radius: 6px;
+  background: var(--accent-weak);
+  color: var(--accent-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- Updating indicator ---------- */
+.updating-row {
+  height: 1.25rem;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+}
+
+.updating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+}
+
+.dot-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---------- Status views ---------- */
+.status-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 4rem 1rem;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.status-emoji {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.error-text {
+  color: var(--down);
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0;
+}
+
+/* ---------- Spinner ---------- */
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  width: 100%;
+  padding: 0.65rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.12s ease;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-secondary {
+  padding: 0.42rem 0.75rem;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--border-strong);
+}
+
+.theme-toggle {
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0.4rem 0.55rem;
+}
+
+.floating-toggle {
+  position: fixed;
+  top: 1.1rem;
+  right: 1.1rem;
+  z-index: 30;
+}
+
+/* ---------- Login ---------- */
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background:
+    radial-gradient(900px 500px at 50% -10%, var(--accent-weak), transparent 70%),
+    linear-gradient(var(--bg-accent), var(--bg));
+}
+
+.login-card {
+  width: 360px;
+  max-width: 100%;
+  padding: 1.75rem;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.login-mark {
+  font-size: 1.4rem;
+}
+
+.login-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.login-sub {
+  margin: 0.35rem 0 0.5rem;
+  font-size: 0.85rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.85rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.field input {
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 0.92rem;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-weak);
+}
+
+.demo-hint {
+  margin: 1rem 0 0;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+/* ---------- Highcharts HTML tooltip ---------- */
+.tt {
+  min-width: 170px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.tt-head {
+  padding: 0.45rem 0.7rem;
+  font-weight: 700;
+  font-size: 0.78rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.18rem 0.7rem;
+}
+
+.tt-row:last-child {
+  padding-bottom: 0.5rem;
+}
+
+.tt-k {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.tt-v {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.tt-up {
+  color: var(--up);
+}
+
+.tt-down {
+  color: var(--down);
+}
+
+/* Highcharts focus outline cleanup */
+.highcharts-root {
+  font-family: inherit;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .content {
+    padding: 1rem;
+  }
+  .summary-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .brand-sub {
+    display: none;
+  }
+}
